@@ -57,3 +57,4 @@ build-iPhoneSimulator/
 
 # VS Code
 .vscode
+logs/*
