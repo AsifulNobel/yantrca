@@ -45,7 +45,8 @@ module UI
         @notes = notes
         note_title_length = Curses.cols - 2
         @notes_menu = Curses::Menu.new(notes.map do |note|
-          Curses::Item.new(note.ljust(note_title_length), '')
+          item_name = note.length > Curses.cols - 2 ? note.slice(0, Curses.cols - 5) + '...' : note.ljust(Curses.cols - 2)
+          Curses::Item.new(item_name, '')
         end)
 
         @notes_menu.set_sub(@note_selection_window)

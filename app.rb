@@ -7,8 +7,9 @@ if __FILE__ == $PROGRAM_NAME
 
   begin
     terminalUi.populate_notes_menu([
-      "hipster ipsum",
-      "lorem ipsum"
+      'hipster ipsum',
+      'lorem ipsum',
+      'imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus mus mauris'
     ])
 
     loop do
