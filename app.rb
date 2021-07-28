@@ -6,9 +6,16 @@ if __FILE__ == $PROGRAM_NAME
   terminalUi = UI::Terminal.new
 
   begin
-    terminalUi.wait_for_note_selection_user_input
+    terminalUi.populate_notes_menu([
+      "hipster ipsum",
+      "lorem ipsum"
+    ])
+
+    loop do
+      terminalUi.wait_for_note_selection_user_input
+    end
   rescue => exception
-    File.open('errors.txt', 'w') do |f|
+    File.open('logs/errors.txt', 'w') do |f|
       f << exception.message
       f << exception.backtrace
       f << "\n"
