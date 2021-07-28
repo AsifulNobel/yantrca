@@ -12,12 +12,8 @@ module UI
     end
 
     def redraw_window(window, &redraw_op)
-      if window
-        window.close
-        redraw_op.call()
-      else
-        redraw_op.call()
-      end
+      window&.close
+      redraw_op.call
     end
 
     def redraw
@@ -25,7 +21,9 @@ module UI
       @content_window = redraw_window(@content_window, &-> { draw_content_window })
       @bottom_bar = redraw_window(@bottom_bar, &-> { draw_bottom_bar })
 
-      @note_selection_window = redraw_window(@note_selection_window, &-> { draw_note_selection_content_subwindow(@content_window) })
+      @note_selection_window = redraw_window(@note_selection_window, &lambda {
+                                                                        draw_note_selection_content_subwindow(@content_window)
+                                                                      })
       @note_selection_window.keypad = true
       populate_notes_menu(@notes)
     end
@@ -38,30 +36,33 @@ module UI
     end
 
     def populate_notes_menu(notes)
-      if notes
-        current_note_name = @notes_menu&.current_item&.name
-        @notes_menu.unpost if @notes_menu
+      return unless notes
 
-        @notes = notes
-        note_title_length = Curses.cols - 2
-        @notes_menu = Curses::Menu.new(notes.map do |note|
-          item_name = note.length > Curses.cols - 2 ? note.slice(0, Curses.cols - 5) + '...' : note.ljust(Curses.cols - 2)
-          Curses::Item.new(item_name, '')
-        end)
+      current_note_name = @notes_menu&.current_item&.name
+      @notes_menu&.unpost
 
-        @notes_menu.set_sub(@note_selection_window)
-        @notes_menu.set_format(Curses.lines - 4, 0)
-        @notes_menu.post
+      @notes = notes
+      @notes_menu = Curses::Menu.new(notes.map do |note|
+        item_name = if note.length > Curses.cols - 2
+                      "#{note.slice(0, Curses.cols - 5)}..."
+                    else
+                      note.ljust(Curses.cols - 2)
+                    end
+        Curses::Item.new(item_name, '')
+      end)
 
-        reselect_note(current_note_name) if current_note_name
-      end
+      @notes_menu.set_sub(@note_selection_window)
+      @notes_menu.set_format(Curses.lines - 4, 0)
+      @notes_menu.post
+
+      reselect_note(current_note_name) if current_note_name
     end
 
     def reselect_note(note_name)
       item_count = @notes_menu.item_count
       @notes_menu.items.each_with_index do |item, index|
         if item.name.strip == note_name.strip
-          return
+          break
         elsif index < item_count - 1
           # No need to select next item, if already on last item
           @notes_menu.down_item
@@ -89,14 +90,13 @@ module UI
 
     def output_highlighted(window, &output)
       window.attron(Curses::A_STANDOUT)
-      output.call()
+      output.call
       window.attroff(Curses::A_STANDOUT)
     end
 
     def draw_top_bar
       top_bar = Curses::Window.new(1, Curses.cols, 0, 0)
-      text = "Yet Another Note Taking Console App 📓️"
-
+      text = 'Yet Another Note Taking Console App 📓️"'
       output_highlighted(top_bar, &-> { top_bar << text.center(Curses.cols) })
 
       top_bar.refresh
@@ -105,15 +105,15 @@ module UI
 
     def draw_bottom_bar
       bottom_bar = Curses::Window.new(1, Curses.cols, Curses.lines - 1, 0)
-      output_highlighted(bottom_bar, &-> { bottom_bar << "^C" })
-      bottom_bar << " - Exit"
+      output_highlighted(bottom_bar, &-> { bottom_bar << '^C' })
+      bottom_bar << ' - Exit'
       bottom_bar.refresh
       bottom_bar
     end
 
     def draw_content_window
       window = Curses::Window.new(Curses.lines - 2, Curses.cols, 1, 0)
-      window.box("|", "-", "#")
+      window.box('|', '-', '#')
       window.refresh
       window
     end
