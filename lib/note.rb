@@ -27,7 +27,7 @@ module Yantrca
       true
     end
 
-    def self.delete_note(name, usi)
+    def self.delete_note(name)
       notes = existing_notes
       note = notes.find { |existing_note| existing_note[:name] == name }
       return false unless note
