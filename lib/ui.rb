@@ -75,11 +75,11 @@ module Yantrca
     end
 
     def show_cursor
-      Curses.curs_set(0)
+      Curses.curs_set(1)
     end
 
     def hide_cursor
-      Curses.curs_set(1)
+      Curses.curs_set(0)
     end
 
     def show_actions_on_bottom_bar(actions)
@@ -93,6 +93,7 @@ module Yantrca
     end
 
     def show_menu(items)
+      remove_menu_if_exists
       @menu = Curses::Menu.new(menu_items(items))
       @menu.opts_off(Curses::O_SHOWDESC)
       @menu.set_sub(@content_section)
@@ -105,6 +106,14 @@ module Yantrca
 
     def select_next_item
       @menu.down_item
+    end
+
+    def current_menu_note_name
+      @menu.current_item.description
+    end
+
+    def remove_menu_if_exists()
+      @menu&.unpost
     end
 
     private

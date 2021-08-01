@@ -30,6 +30,10 @@ module Yantrca
         case input
         when 1
           return AddNoteState.new(@user_interface)
+        when 4
+          if Note.delete_note(@user_interface.current_menu_note_name, @user_interface)
+            show_existing_notes
+          end
         when Curses::KEY_UP
           @user_interface.select_previous_item
         when Curses::KEY_DOWN
@@ -57,6 +61,7 @@ module Yantrca
         @user_interface.show_menu(@notes.map { |note| note[:name] })
       else
         @user_interface.show_content('No Notes Found!')
+        @user_interface.remove_menu_if_exists
         @user_interface.hide_cursor
       end
     end

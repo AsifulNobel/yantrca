@@ -27,6 +27,22 @@ module Yantrca
       true
     end
 
+    def self.delete_note(name, usi)
+      notes = existing_notes
+      note = notes.find { |existing_note| existing_note[:name] == name }
+      return false unless note
+
+      begin
+        File.delete(File.expand_path(note[:path]))
+      rescue Errno::ENOENT
+        # File already deleted
+      end
+
+      notes = notes.reject { |existing_note| existing_note[:name] == name }
+      File.open(notes_list_path, 'w') { |f| JSON.dump(notes, f) }
+      true
+    end
+
     def self.notes_list_path
       File.join(DIRECTORY, 'list.json')
     end
