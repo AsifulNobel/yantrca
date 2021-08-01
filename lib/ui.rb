@@ -11,6 +11,7 @@ module Yantrca
     end
 
     def close
+      @menu&.unpost
       @top_bar.close
       @middle_window.close
       @bottom_bar.close
@@ -36,8 +37,10 @@ module Yantrca
     end
 
     def top_bar_title=(text)
+      return unless text
+
       @top_bar.standout
-      @top_bar << text&.center(Curses.cols)
+      @top_bar << text.center(Curses.cols)
       @top_bar.standend
       @top_bar.refresh
     end
@@ -46,19 +49,49 @@ module Yantrca
       @content_section.getch
     end
 
+    def show_content(text)
+      @content_section << text
+    end
+
+    def show_cursor
+      Curses.curs_set(0)
+    end
+
+    def hide_cursor
+      Curses.curs_set(1)
+    end
+
+    def show_actions_on_bottom_bar(actions)
+      actions.each do |action_key_stroke, action_description|
+        @bottom_bar.standout
+        @bottom_bar << "#{action_key_stroke} "
+        @bottom_bar.standend
+        @bottom_bar << " - #{action_description} "
+      end
+      @bottom_bar.refresh
+    end
+
+    def show_menu(items)
+      @menu = Curses::Menu.new(menu_items(items))
+      @menu.opts_off(Curses::O_SHOWDESC)
+      @menu.set_sub(@content_section)
+      @menu.post
+    end
+
     private
 
     def initialize_default_styles
       Curses.noecho
       Curses.raw
       Curses.nonl
-      Curses.curs_set(1)
+      show_cursor
     end
 
     def initialize_windows
       @top_bar = draw_top_bar
       @middle_window = draw_middle_window
       @content_section = draw_content_section(@middle_window)
+      @content_section.keypad = true
       @bottom_bar = draw_bottom_bar
     end
 
@@ -76,13 +109,26 @@ module Yantrca
     end
 
     def draw_content_section(parent_window)
-      parent_window.derwin(Curses.lines - 4, Curses.cols - 2, 1, 1)
+      sub_window = parent_window.derwin(Curses.lines - 4, Curses.cols - 2, 1, 1)
+      sub_window.refresh
+      sub_window
     end
 
     def draw_bottom_bar
       window = Curses::Window.new(1, Curses.cols, Curses.lines - 1, 0)
       window.refresh
       window
+    end
+
+    def menu_items(items)
+      items.map do |item_text|
+        item_name = if item_text.length > Curses.cols - 2
+                      "#{item_text.slice(0, Curses.cols - 5)}..."
+                    else
+                      item_text.ljust(Curses.cols - 2)
+                    end
+        Curses::Item.new(item_name, item_text)
+      end
     end
   end
 end

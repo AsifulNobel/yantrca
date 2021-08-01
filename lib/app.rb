@@ -10,8 +10,13 @@ module Yantrca
     end
 
     def start
-      @start = StartState.new(@user_interface)
-      @start.activate
+      current_state = StartState.new(@user_interface)
+
+      loop do
+        break unless current_state
+
+        current_state = current_state.activate
+      end
     end
 
     def stop
