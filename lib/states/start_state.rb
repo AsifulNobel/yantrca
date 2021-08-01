@@ -13,9 +13,10 @@ module Yantrca
 
     def activate
       @user_interface.clear
+      @user_interface.show_cursor
       @user_interface.top_bar_title = TITLE
-      show_available_actions
       show_existing_notes
+      show_available_actions
       process_user_input
     end
 
@@ -48,21 +49,21 @@ module Yantrca
       actions = [
         ['^C', 'Exit'],
         ['^A', 'Add Note'],
-        ['^U', 'Update Note'], # This should be available only if notes menu has alteast one note
         ['^D', 'Delete Note']
       ]
+      actions.insert(2, ['^U', 'Update Note']) unless @notes.empty?
       @user_interface.show_actions_on_bottom_bar(actions)
     end
 
     def show_existing_notes
       @notes = Note.existing_notes
 
-      if !@notes.empty?
-        @user_interface.show_menu(@notes.map { |note| note[:name] })
-      else
-        @user_interface.show_content('No Notes Found!')
+      if @notes.empty?
         @user_interface.remove_menu_if_exists
+        @user_interface.show_content('No Notes Found!')
         @user_interface.hide_cursor
+      else
+        @user_interface.show_menu(@notes.map { |note| note[:name] })
       end
     end
   end

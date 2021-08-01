@@ -112,8 +112,9 @@ module Yantrca
       @menu.current_item.description
     end
 
-    def remove_menu_if_exists()
+    def remove_menu_if_exists
       @menu&.unpost
+      @menu = nil
     end
 
     private
@@ -122,7 +123,7 @@ module Yantrca
       Curses.noecho
       Curses.raw
       Curses.nonl
-      hide_cursor
+      show_cursor
     end
 
     def initialize_windows
