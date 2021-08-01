@@ -122,6 +122,7 @@ module Yantrca
       @content_section = draw_content_section(@middle_window)
       @content_section.keypad = true
       @bottom_bar = draw_bottom_bar
+      @bottom_bar.keypad = true
     end
 
     def draw_top_bar

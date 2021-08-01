@@ -52,8 +52,18 @@ module Yantrca
 
         case input
         when 10, 13
-          Note.save_note(note_name, @buffer)
-          break
+          if note_name.empty?
+            get_note_name_again('Note name cannot be empty.')
+            next
+          end
+
+          if Note.add_note(note_name, @buffer)
+            break
+          else
+            get_note_name_again('Note with same name already exists!')
+            note_name = ''
+            next
+          end
         else
           note_name = "#{note_name}#{input}"
           @user_interface.show_on_bottom_bar(input)
@@ -68,6 +78,14 @@ module Yantrca
         ['^X', 'Discard']
       ]
       @user_interface.show_actions_on_bottom_bar(actions)
+    end
+
+    def get_note_name_again(message)
+      @user_interface.clear_bottom_bar
+      @user_interface.show_on_bottom_bar(message)
+      @user_interface.bottom_bar_input
+      @user_interface.clear_bottom_bar
+      @user_interface.show_on_bottom_bar('Enter note name: ')
     end
   end
 end
