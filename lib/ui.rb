@@ -20,6 +20,7 @@ module Yantrca
 
     def clear_top_bar
       @top_bar.clear
+      @top_bar.refresh
     end
 
     def clear_content
@@ -28,6 +29,7 @@ module Yantrca
 
     def clear_bottom_bar
       @bottom_bar.clear
+      @bottom_bar.refresh
     end
 
     def clear
@@ -45,12 +47,31 @@ module Yantrca
       @top_bar.refresh
     end
 
-    def user_input
-      @content_section.getch
+    def user_input(window)
+      ch = window.getch
+
+      case ch
+      when 3
+        return nil
+      else
+        ch
+      end
+    end
+
+    def content_input
+      user_input(@content_section)
+    end
+
+    def bottom_bar_input
+      user_input(@bottom_bar)
     end
 
     def show_content(text)
       @content_section << text
+    end
+
+    def show_on_bottom_bar(text)
+      @bottom_bar << text
     end
 
     def show_cursor
@@ -78,13 +99,21 @@ module Yantrca
       @menu.post
     end
 
+    def select_previous_item
+      @menu.up_item
+    end
+
+    def select_next_item
+      @menu.down_item
+    end
+
     private
 
     def initialize_default_styles
       Curses.noecho
       Curses.raw
       Curses.nonl
-      show_cursor
+      hide_cursor
     end
 
     def initialize_windows

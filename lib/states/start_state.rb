@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative '../note'
+require_relative 'add_note_state'
+
 module Yantrca
   class StartState
     TITLE = 'Yet Another Note Taking Console App 📓️'
@@ -20,15 +23,18 @@ module Yantrca
 
     def process_user_input
       loop do
-        input = @user_interface.user_input
+        input = @user_interface.content_input
+
+        return unless input
 
         case input
-        # when 1
-        #   # return add note state
-        when 3
-          break
+        when 1
+          return AddNoteState.new(@user_interface)
+        when Curses::KEY_UP
+          @user_interface.select_previous_item
+        when Curses::KEY_DOWN
+          @user_interface.select_next_item
         else
-          @user_interface.show_content(input.to_s)
           next
         end
       end
@@ -45,22 +51,13 @@ module Yantrca
     end
 
     def show_existing_notes
-      @notes = existing_notes
+      @notes = Note.existing_notes
 
       if !@notes.empty?
-        @user_interface.show_menu(@notes)
+        @user_interface.show_menu(@notes.map { |note| note[:name] })
       else
         @user_interface.show_content('No Notes Found!')
         @user_interface.hide_cursor
-      end
-    end
-
-    def existing_notes
-      begin
-        File.open(File.join('notes', 'list.json')) do
-        end
-      rescue Errno::ENOENT
-        []
       end
     end
   end
