@@ -34,6 +34,8 @@ module Yantrca
         when 4
           if Note.delete_note(@user_interface.current_menu_note_name, @user_interface)
             show_existing_notes
+            @user_interface.clear_bottom_bar
+            show_available_actions
           end
         when Curses::KEY_UP
           @user_interface.select_previous_item
@@ -48,10 +50,14 @@ module Yantrca
     def show_available_actions
       actions = [
         ['^C', 'Exit'],
-        ['^A', 'Add Note'],
-        ['^D', 'Delete Note']
+        ['^A', 'Add Note']
       ]
-      actions.insert(2, ['^U', 'Update Note']) unless @notes.empty?
+
+      unless @notes.empty?
+        actions.push(['^U', 'Update Note'])
+        actions.push(['^D', 'Delete Note'])
+      end
+
       @user_interface.show_actions_on_bottom_bar(actions)
     end
 
