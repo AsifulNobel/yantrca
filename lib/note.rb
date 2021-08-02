@@ -3,6 +3,7 @@
 require 'json'
 
 module Yantrca
+  # Helper module that contains the methods to add, update and delete notes
   module Note
     DIRECTORY = 'notes'
 

@@ -4,6 +4,7 @@ require_relative 'start_state'
 require 'securerandom'
 
 module Yantrca
+  # State to add a new note
   class AddNoteState
     def initialize(user_interface)
       @user_interface = user_interface

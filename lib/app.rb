@@ -4,6 +4,7 @@ require_relative 'ui'
 require_relative 'states/start_state'
 
 module Yantrca
+  # Main container class that acts as the entrypoint of the application
   class App
     def initialize
       @user_interface = UI.new

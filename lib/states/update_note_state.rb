@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Yantrca
+  # State to update a note
   class UpdateNoteState
     def initialize(user_interface, note_name)
       @user_interface = user_interface

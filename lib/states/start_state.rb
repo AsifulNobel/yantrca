@@ -5,6 +5,7 @@ require_relative 'add_note_state'
 require_relative 'update_note_state'
 
 module Yantrca
+  # App's starting state
   class StartState
     TITLE = 'Yet Another Note Taking Console App 📓️'
 
