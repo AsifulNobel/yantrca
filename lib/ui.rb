@@ -3,6 +3,7 @@
 require 'curses'
 
 module Yantrca
+  # Class to let the state's interact with terminal screen easily
   class UI
     def initialize
       @screen = Curses.init_screen
