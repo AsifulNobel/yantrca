@@ -14,7 +14,6 @@ module Yantrca
       @user_interface.clear_content
       @user_interface.clear_bottom_bar
       show_available_actions
-      @notes = Note.existing_notes
       @user_interface.show_cursor
       process_user_input
     end

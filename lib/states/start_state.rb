@@ -2,6 +2,7 @@
 
 require_relative '../note'
 require_relative 'add_note_state'
+require_relative 'update_note_state'
 
 module Yantrca
   class StartState
@@ -31,8 +32,10 @@ module Yantrca
         case input
         when 1
           return AddNoteState.new(@user_interface)
+        when 21
+          return UpdateNoteState.new(@user_interface, @user_interface.current_menu_note_name)
         when 4
-          if Note.delete_note(@user_interface.current_menu_note_name, @user_interface)
+          if Note.delete_note(@user_interface.current_menu_note_name)
             show_existing_notes
             @user_interface.clear_bottom_bar
             show_available_actions

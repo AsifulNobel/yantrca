@@ -47,6 +47,25 @@ module Yantrca
       File.join(DIRECTORY, 'list.json')
     end
 
+    def self.note(name)
+      notes = existing_notes
+      note = notes.find { |existing_note| existing_note[:name] == name }
+
+      return '' unless note
+
+      File.open(note[:path], 'r') { |f| f&.read() }
+    end
+
+    def self.update_note(name, text)
+      notes = existing_notes
+      note = notes.find { |existing_note| existing_note[:name] == name }
+
+      return false unless note
+
+      File.open(note[:path], 'w') { |f| f.write(text) }
+      true
+    end
+
     private_class_method :notes_list_path
   end
 end
