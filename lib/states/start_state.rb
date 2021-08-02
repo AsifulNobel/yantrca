@@ -35,11 +35,8 @@ module Yantrca
         when 21
           return UpdateNoteState.new(@user_interface, @user_interface.current_menu_note_name)
         when 4
-          if Note.delete_note(@user_interface.current_menu_note_name)
-            show_existing_notes
-            @user_interface.clear_bottom_bar
-            show_available_actions
-          end
+          delete_note
+          next
         when Curses::KEY_UP
           @user_interface.select_previous_item
         when Curses::KEY_DOWN
@@ -48,6 +45,14 @@ module Yantrca
           next
         end
       end
+    end
+
+    def delete_note
+      return unless Note.delete_note(@user_interface.current_menu_note_name)
+
+      show_existing_notes
+      @user_interface.clear_bottom_bar
+      show_available_actions
     end
 
     def show_available_actions
