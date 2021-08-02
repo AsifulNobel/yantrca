@@ -17,7 +17,7 @@ module Yantrca
     def self.add_note(name, text)
       notes = existing_notes
 
-      return false if notes.any? { |note| note[:name] == name }
+      return false if notes.any?(&filter_by_note_name_block(name))
 
       file_path = File.join(DIRECTORY, "#{SecureRandom.uuid}.txt")
       File.open(file_path, 'w') { |f| f.write(text) }
@@ -29,7 +29,7 @@ module Yantrca
 
     def self.delete_note(name)
       notes = existing_notes
-      note = notes.find { |existing_note| existing_note[:name] == name }
+      note = notes.find(&filter_by_note_name_block(name))
       return false unless note
 
       begin
@@ -38,7 +38,7 @@ module Yantrca
         # File already deleted
       end
 
-      notes = notes.reject { |existing_note| existing_note[:name] == name }
+      notes = notes.reject(&filter_by_note_name_block(name))
       File.open(notes_list_path, 'w') { |f| JSON.dump(notes, f) }
       true
     end
@@ -48,8 +48,7 @@ module Yantrca
     end
 
     def self.note(name)
-      notes = existing_notes
-      note = notes.find { |existing_note| existing_note[:name] == name }
+      note = existing_notes.find(&filter_by_note_name_block(name))
 
       return '' unless note
 
@@ -57,8 +56,7 @@ module Yantrca
     end
 
     def self.update_note(name, text)
-      notes = existing_notes
-      note = notes.find { |existing_note| existing_note[:name] == name }
+      note = existing_notes.find(&filter_by_note_name_block(name))
 
       return false unless note
 
@@ -66,6 +64,10 @@ module Yantrca
       true
     end
 
-    private_class_method :notes_list_path
+    def self.filter_by_note_name_block(name)
+      ->(note) { note[:name] == name }
+    end
+
+    private_class_method :notes_list_path, :filter_by_note_name_block
   end
 end
