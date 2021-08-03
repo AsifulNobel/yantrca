@@ -30,20 +30,24 @@ module Yantrca
 
         return unless input
 
-        case input
-        when 1
-          return AddNoteState.new(@user_interface)
-        when 21
-          return UpdateNoteState.new(@user_interface, @user_interface.current_menu_note_name)
-        when 4
-          delete_note
-          next
-        when Curses::KEY_UP
-          @user_interface.select_previous_item
-        when Curses::KEY_DOWN
-          @user_interface.select_next_item
-        else
-          next
+        begin
+          case input
+          when 1
+            return AddNoteState.new(@user_interface)
+          when 21
+            return UpdateNoteState.new(@user_interface, @user_interface.current_menu_note_name)
+          when 4
+            delete_note
+            next
+          when Curses::KEY_UP
+            @user_interface.select_previous_item
+          when Curses::KEY_DOWN
+            @user_interface.select_next_item
+          else
+            next
+          end
+        rescue Curses::RequestDeniedError
+          # Suppress menu navigation errors
         end
       end
     end
