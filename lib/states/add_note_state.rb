@@ -33,6 +33,9 @@ module Yantrca
         when 19
           save_note
           return StartState.new(@user_interface)
+        when Curses::KEY_BACKSPACE
+          @buffer.chop!
+          @user_interface.content_input_chop
         else
           @buffer = "#{@buffer}#{input}"
           @user_interface.show_content(input.to_s)
@@ -58,13 +61,16 @@ module Yantrca
             next
           end
 
-          if Note.add_note(note_name, @buffer)
-            break
-          else
-            get_note_name_again('Note with same name already exists!')
-            note_name = ''
-            next
-          end
+          break if Note.add_note(note_name, @buffer)
+
+          get_note_name_again('Note with same name already exists!')
+          note_name = ''
+          next
+        when Curses::KEY_BACKSPACE
+          next if note_name.empty?
+
+          note_name.chop!
+          @user_interface.bottom_bar_input_chop
         else
           note_name = "#{note_name}#{input}"
           @user_interface.show_on_bottom_bar(input)

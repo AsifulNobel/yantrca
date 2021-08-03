@@ -75,6 +75,19 @@ module Yantrca
       @bottom_bar << text
     end
 
+    def input_chop(window)
+      window.setpos(window.cury, window.curx - 1)
+      window.delch
+    end
+
+    def content_input_chop
+      input_chop(@content_section)
+    end
+
+    def bottom_bar_input_chop
+      input_chop(@bottom_bar)
+    end
+
     def show_cursor
       Curses.curs_set(1)
     end

@@ -36,6 +36,9 @@ module Yantrca
         when 19
           save_note
           return StartState.new(@user_interface)
+        when Curses::KEY_BACKSPACE
+          @buffer.chop!
+          @user_interface.content_input_chop
         else
           @buffer = "#{@buffer}#{input}"
           @user_interface.show_content(input.to_s)
