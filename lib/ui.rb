@@ -53,7 +53,7 @@ module Yantrca
 
       case ch
       when 3
-        return nil
+        nil
       else
         ch
       end
